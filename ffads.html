@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daimond Rewards</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ff758c, #7b2ff7);
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 { font-size: 2.2rem; margin-bottom: 10px; }
+    .balance-box { background: rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+    .ads-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 25px; }
+    .ad-btn { padding: 30px 10px; font-size: 1.2rem; font-weight: bold; border: none; border-radius: 15px; background: #3498db; color: white; cursor: pointer; transition: transform 0.2s, background 0.3s; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+    .ad-btn:active { transform: scale(0.9); }
+    .ad-btn.done { background: #2ecc71; cursor: not-allowed; }
+    .claim-box, .locked-box { background: rgba(255,255,255,0.2); padding: 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+    .claim-box input { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 10px; border: none; }
+    .claim-btn { background: #2ecc71; padding: 12px; width: 100%; border: none; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background 0.3s; }
+    .claim-btn:hover { background: #27ae60; }
+    .banner-ads, .social-ads { background: rgba(255,255,255,0.1); border-radius: 15px; display: flex; align-items: center; justify-content: center; margin: 15px auto; }
+    .banner-ads { height: 50px; width: 320px; }
+    .social-ads { height: 90px; width: 320px; }
+  </style>
+</head>
+<body>
+
+  <h1>💎 Daimond Rewards</h1>
+  <div class="balance-box">
+    <p>Balance: <span id="balance">0</span> 💎</p>
+    <p>Ads Watched: <span id="adsCount">0</span>/10</p>
+    <p id="timerText"></p>
+  </div>
+
+  <div class="ads-grid" id="adsGrid">
+    <!-- 10 Ads Button -->
+  </div>
+
+  <div id="uidSection">
+    <div class="locked-box">
+      <p>UID Box 🔒 (100 Daimond হলে Unlock হবে)</p>
+    </div>
+  </div>
+
+  <!-- Banner Ads -->
+  <div class="banner-ads">
+    <script type="text/javascript">
+      atOptions = {
+        'key' : 'bcbcf04688d9fbd84fa6517aa12eae77',
+        'format' : 'iframe',
+        'height' : 50,
+        'width' : 320,
+        'params' : {}
+      };
+      document.write('<scr'+'ipt type="text/javascript" src="//www.highperformanceformat.com/bcbcf04688d9fbd84fa6517aa12eae77/invoke.js"></scr'+'ipt>');
+    </script>
+  </div>
+
+  <!-- Social Ads -->
+  <div class="social-ads">
+    <script type='text/javascript' src='//pl27467567.profitableratecpm.com/58/7f/35/587f35724c4fb2a7f1df4f31d00af3bb.js'></script>
+  </div>
+
+  <script>
+    let diamonds = parseInt(localStorage.getItem("diamonds")) || 0;
+    let watchedAds = parseInt(localStorage.getItem("watchedAds")) || 0;
+    let lockTime = parseInt(localStorage.getItem("lockTime")) || null;
+
+    const balanceEl = document.getElementById("balance");
+    const adsCountEl = document.getElementById("adsCount");
+    const adsGrid = document.getElementById("adsGrid");
+    const uidSection = document.getElementById("uidSection");
+    const timerText = document.getElementById("timerText");
+
+    function updateUI() {
+      balanceEl.textContent = diamonds;
+      adsCountEl.textContent = watchedAds;
+
+      // Ads Button Render
+      adsGrid.innerHTML = "";
+      for (let i = 0; i < 10; i++) {
+        const btn = document.createElement("button");
+        btn.textContent = "Ad " + (i + 1);
+        btn.className = "ad-btn";
+        if (i < watchedAds) btn.classList.add("done");
+        btn.onclick = () => watchAd(i);
+        adsGrid.appendChild(btn);
+      }
+
+      // UID Section
+      if (diamonds >= 100) {
+        uidSection.innerHTML = `
+          <div class="claim-box">
+            <input type="text" id="uidInput" placeholder="Enter Free Fire UID">
+            <button class="claim-btn" onclick="claimReward()">Claim 100 💎</button>
+          </div>
+        `;
+      } else {
+        uidSection.innerHTML = `
+          <div class="locked-box">
+            <p>UID Box 🔒 (100 Daimond হলে Unlock হবে)</p>
+          </div>
+        `;
+      }
+    }
+
+    function watchAd(index) {
+      if (lockTime && Date.now() < lockTime) {
+        alert("আজকের Ads শেষ! ⏳ 24 ঘণ্টা পরে আবার চেষ্টা করুন।");
+        return;
+      }
+      if (watchedAds < 10) {
+        // Ads লিঙ্ক ওপেন হবে
+        window.open("https://www.profitableratecpm.com/pchi4faz?key=ec736215b33be62c5247ee8584f31a82", "_blank");
+
+        // Daimond Add হবে
+        diamonds++;
+        watchedAds++;
+        if (watchedAds === 10) {
+          lockTime = Date.now() + 24*60*60*1000; // 24 ঘন্টা লক
+        }
+        saveData();
+        updateUI();
+      }
+    }
+
+    function claimReward() {
+      const uid = document.getElementById("uidInput").value;
+      if (!uid) {
+        alert("UID দিতে হবে Claim করার জন্য!");
+        return;
+      }
+      alert("✅ " + uid + " এ 100 Daimond Claim করা হয়েছে!");
+      diamonds -= 100;
+      saveData();
+      updateUI();
+    }
+
+    function saveData() {
+      localStorage.setItem("diamonds", diamonds);
+      localStorage.setItem("watchedAds", watchedAds);
+      if(lockTime) localStorage.setItem("lockTime", lockTime);
+    }
+
+    function updateTimer() {
+      if (!lockTime) { timerText.textContent = ""; return; }
+      const diff = lockTime - Date.now();
+      if(diff <= 0){
+        lockTime=null; watchedAds=0; saveData(); updateUI(); timerText.textContent="";
+        return;
+      }
+      const hours=Math.floor(diff/(1000*60*60));
+      const minutes=Math.floor((diff%(1000*60*60))/(1000*60));
+      timerText.textContent = "⏳ আবার দেখতে পারবেন: "+hours+"h "+minutes+"m";
+    }
+
+    setInterval(updateTimer, 60000);
+    updateUI();
+    updateTimer();
+  </script>
+
+</body>
+</html>
